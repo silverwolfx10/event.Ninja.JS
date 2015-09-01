@@ -1,0 +1,27 @@
+{
+  "name": "event.Ninja.JS",
+  "version": "0.0.0",
+  "authors": [
+    "Cleber de Moraes Goncalves <cleber.programmer@hotmail.com>"
+  ],
+  "description": "Modulo de delegação evento. Se você estiver familiarizado com jQuery, então ele pode parecer familiar para você",
+  "main": "event.js",
+  "keywords": [
+    "javascript"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Bibizzy/event.Ninja.JS",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Ninja.JS": "*",
+    "curry.Ninja.JS": "*",
+    "forEach.Ninja.JS": "*",
+    "slice.Ninja.JS": "*"
+  }
+}
