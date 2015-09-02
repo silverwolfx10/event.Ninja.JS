@@ -13,7 +13,7 @@
  *        });
  *
  */
-this.Ninja.module('$event', ['$curry', '$forEach', '$slice'], function ($curry, $forEach, $slice, _) {
+this.Ninja.module('$event', ['$curry'], function ($curry, _) {
   
   /**
    * Modulo de delegacao de eventos
@@ -43,52 +43,34 @@ this.Ninja.module('$event', ['$curry', '$forEach', '$slice'], function ($curry, 
      * Seleciona todos os elemtnos que a query selecionar
      * 
      * @private
-     * @method $$
+     * @method $
      * @param {String} query Seletor de elementos
      * @return {Array} Colecao com todos os elementos encontrado pela query
      * @example
      * 
-     *        $$('body');
+     *        $('body');
      * 
      */
-    function $$(query) {
-      return $slice((root || document).querySelectorAll(query));
-    }
-    
-    /**
-     * Coringa para adcionar ou remover os *EventListener
-     * 
-     * @private
-     * @method hook
-     * @param {String} method nome dos eventos, podendo ser addEventListener ou removeEventListener
-     * @param {Node} el Elemento do dom que sera manipulado
-     * @param {String} event Nome do evento que ser escultado ou deixara de ser escultado
-     * @param {Functon} callback Funcao que sera executado quando o evento for disparado
-     * @example
-     * 
-     *        hood('addEventListener', document, 'click', function () {});
-     * 
-     */
-    function hook(method, el, event, callback) {
-      el[method](event, callback, false);
+    function $(query) {
+      return (root || document).querySelector(query);
     }
   
     /**
-     * Seleciona uma colecao de Node List para aplicar ou remover eventos
+     * Seleciona um Node para aplicar ou remover eventos
      * 
      * @private
-     * @method handler
+     * @method hook
      * @param {String} method nome dos eventos, podendo ser addEventListener ou removeEventListener
      * @param {String} query Seletor de elementos
      * @param {String} event Nome do evento que ser escultado ou deixara de ser escultado
      * @param {Functon} callback Funcao que sera executado quando o evento for disparado
      * @example
      * 
-     *        handler('addEventListener', 'body', 'click', function () {});
+     *        hook('addEventListener', 'body', 'click', function () {});
      * 
      */
-    function handler(method, query, event, callback) {
-      $forEach($$(query), $curry(hook)(method, _, event, callback));
+    function hook(method, query, event, callback) {
+      $(query)[method](event, callback, false);
     }
     
     /**
@@ -111,7 +93,7 @@ this.Ninja.module('$event', ['$curry', '$forEach', '$slice'], function ($curry, 
        *        $event().on('addEventListener', 'body', function () {});
        * 
        */
-      on: $curry(handler)('addEventListener'),
+      on: $curry(hook)('addEventListener'),
       
       /**
        * Remove eventos, a funcao curry
@@ -127,7 +109,7 @@ this.Ninja.module('$event', ['$curry', '$forEach', '$slice'], function ($curry, 
        *        $event().off('addEventListener', 'body', function () {});
        * 
        */
-      off: $curry(handler)('removeEventListener')
+      off: $curry(hook)('removeEventListener')
       
     };
   

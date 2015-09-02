@@ -20,8 +20,6 @@
   ],
   "dependencies": {
     "Ninja.JS": "*",
-    "curry.Ninja.JS": "*",
-    "forEach.Ninja.JS": "*",
-    "slice.Ninja.JS": "*"
+    "curry.Ninja.JS": "*"
   }
 }
