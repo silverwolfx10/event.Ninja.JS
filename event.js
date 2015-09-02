@@ -61,15 +61,15 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
      * @private
      * @method hook
      * @param {String} method nome dos eventos, podendo ser addEventListener ou removeEventListener
-     * @param {String} query Seletor de elementos
      * @param {String} event Nome do evento que ser escultado ou deixara de ser escultado
+     * @param {String} query Seletor de elementos
      * @param {Functon} callback Funcao que sera executado quando o evento for disparado
      * @example
      * 
      *        hook('addEventListener', 'body', 'click', function () {});
      * 
      */
-    function hook(method, query, event, callback) {
+    function hook(method, event, query, callback) {
       $(query)[method](event, callback, false);
     }
     
