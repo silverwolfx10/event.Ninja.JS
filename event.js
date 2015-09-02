@@ -52,7 +52,7 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
      * 
      */
     function $(query) {
-      return (root || document).querySelector(query);
+      return (root || document).querySelector(query) || { addEventListener: stub, removeEventListener: stub };
     }
   
     /**
@@ -72,6 +72,20 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
     function hook(method, event, query, callback) {
       $(query)[method](event, callback, false);
     }
+    
+    /**
+     * Funcao fake para ser executado quando um elemento node nao for
+     * encontrado no escope ou no document
+     * 
+     * @private
+     * @method stub
+     * @return {Function} Funcao que nao executa nada
+     * @example
+     * 
+     *        stub();
+     * 
+     */
+    function stub() {}
     
     /**
      * Revelacao dos metodos da Class Event, encapsulando a visibilidade das funcoes
