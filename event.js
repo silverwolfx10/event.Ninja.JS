@@ -8,7 +8,7 @@
  * @author Cleber de Moraes Goncalves <cleber.programmer>
  * @example
  * 
- *        $event().on('body', 'click', funciton (e) {
+ *        $event().on('body', 'click', function (e) {
  *          // code here ...
  *        });
  *
@@ -24,7 +24,7 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
    * @return {Object} Objeto com os metodos para manipulacao de eventos
    * @example
    * 
-   *        $event().on('body', 'click', funciton (e) {
+   *        $event().on('body', 'click', function (e) {
    *          // code here ...
    *        });
    * 
