@@ -29,14 +29,14 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
    *        });
    * 
    */
-  function Event(root) {
+  function Event(context) {
   
     /**
      * Torna o Event auto instanciavel, evitando a necessidade do 'new' toda
      * vez que for utilizar o Event
      */
     if (!(this instanceof Event)) {
-      return new Event(root);
+      return new Event(context || document);
     }
     
     /**
@@ -52,7 +52,44 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
      * 
      */
     function $(query) {
-      return (root || document).querySelector(query) || { addEventListener: stub, removeEventListener: stub };
+      return context.querySelector(query) || stub();
+    }
+    
+    /**
+     * Decide se deve legegar o evento propagado
+     * 
+     * @private
+     * @method criteria
+     * @param {String} event Nome do evento
+     * @param {String} query Seletor para localizar o elemento
+     * @param {Function} callback Funcao callback
+     * @example
+     * 
+     *        criteria('click', 'body', fucntion () {});
+     * 
+     */
+    function criteria(event, query, callback) {
+      Event.target(event).matches(query) && callback(event);
+    }
+    
+    /**
+     * Com delegation nos podemos ouvir por eventos que acontecem no HTML como click,
+     * mousedown, entre outros. Porem em vez de adicionar eventos para cada elemento no DOM,
+     * nos adicionamos apenas um evento em um elemento pai,
+     * que irá servir para detectar eventos nos elementos filhos
+     * 
+     * @public
+     * @method delegation
+     * @param {String} type Nome do evento que ser escultado ou deixara de ser escultado
+     * @param {String} query Seletor de elementos
+     * @param {Functon} callback Funcao que sera executado quando o evento for disparado
+     * @example
+     * 
+     *        $event(this).delegation('click', '#id', function () {});
+     * 
+     */
+    function delegation(type, query, callback) {
+      context.addEventListener(type, $curry(criteria)(_, query, callback), !1);
     }
   
     /**
@@ -61,7 +98,7 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
      * @private
      * @method hook
      * @param {String} method nome dos eventos, podendo ser addEventListener ou removeEventListener
-     * @param {String} event Nome do evento que ser escultado ou deixara de ser escultado
+     * @param {String} type Nome do evento que ser escultado ou deixara de ser escultado
      * @param {String} query Seletor de elementos
      * @param {Functon} callback Funcao que sera executado quando o evento for disparado
      * @example
@@ -69,8 +106,8 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
      *        hook('addEventListener', 'body', 'click', function () {});
      * 
      */
-    function hook(method, event, query, callback) {
-      $(query)[method](event, callback, false);
+    function hook(method, type, query, callback) {
+      $(query)[method](type, callback, !1);
     }
     
     /**
@@ -85,7 +122,9 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
      *        stub();
      * 
      */
-    function stub() {}
+    function stub() {
+      return { addEventListener: stub, removeEventListener: stub };
+    }
     
     /**
      * Revelacao dos metodos da Class Event, encapsulando a visibilidade das funcoes
@@ -94,17 +133,34 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
     return {
       
       /**
+       * Com delegation nos podemos ouvir por eventos que acontecem no HTML como click,
+       * mousedown, entre outros. Porem em vez de adicionar eventos para cada elemento no DOM,
+       * nos adicionamos apenas um evento em um elemento pai,
+       * que irá servir para detectar eventos nos elementos filhos
+       * 
+       * @public
+       * @method delegation
+       * @param {String} type Nome do evento que ser escultado ou deixara de ser escultado
+       * @param {String} query Seletor de elementos
+       * @param {Functon} callback Funcao que sera executado quando o evento for disparado
+       * @example
+       * 
+       *        $event(this).delegation('click', '#id', function () {});
+       * 
+       */
+      delegation: $curry(delegation),
+      
+      /**
        * Adiciona eventos, a funcao curry
        * 
        * @public
        * @method on
-       * @param {String} method nome dos eventos, podendo ser addEventListener ou removeEventListener
+       * @param {String} type Nome do evento que ser escultado ou deixara de ser escultado
        * @param {String} query Seletor de elementos
-       * @param {String} event Nome do evento que ser escultado ou deixara de ser escultado
        * @param {Functon} callback Funcao que sera executado quando o evento for disparado
        * @example
        * 
-       *        $event().on('addEventListener', 'body', function () {});
+       *        $event().on('click', 'body', function () {});
        * 
        */
       on: $curry(hook)('addEventListener'),
@@ -113,14 +169,13 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
        * Remove eventos, a funcao curry
        * 
        * @public
-       * @method on
-       * @param {String} method nome dos eventos, podendo ser addEventListener ou removeEventListener
+       * @method off
+       * @param {String} type Nome do evento que ser escultado ou deixara de ser escultado
        * @param {String} query Seletor de elementos
-       * @param {String} event Nome do evento que ser escultado ou deixara de ser escultado
        * @param {Functon} callback Funcao que sera executado quando o evento for disparado
        * @example
        * 
-       *        $event().off('addEventListener', 'body', function () {});
+       *        $event().off('click', 'body', function () {});
        * 
        */
       off: $curry(hook)('removeEventListener')
@@ -128,6 +183,22 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
     };
   
   }
+  
+  /**
+   * Encontra o elemento dentro do objeto event
+   * 
+   * @static
+   * @method target
+   * @param {Event} event Evento que foi disparado
+   * @return {Node} elemento que sofreu o evento
+   * @example
+   *
+   *        $event.target(event);
+   * 
+   */
+  Event.target = function (event) {
+    return event.toElement || event.srcTarget || event.target || event.srcElement;
+  };
   
   /**
    * Revelacao do modulo $event, encapsulando a visibilidade das funcoes
