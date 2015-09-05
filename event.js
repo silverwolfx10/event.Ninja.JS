@@ -89,7 +89,7 @@ this.Ninja.module('$event', ['$curry'], function ($curry, _) {
      * 
      */
     function delegation(type, query, callback) {
-      context.addEventListener(type, $curry(criteria)(_, query, callback), !1);
+      context.addEventListener(type, $curry(criteria)(_, query, callback), /blur|focus/.test(type));
     }
   
     /**
